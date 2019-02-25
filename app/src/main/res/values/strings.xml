@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FingerDrawer</string>
+    <string name="brushSize">Brush size</string>
 </resources>
