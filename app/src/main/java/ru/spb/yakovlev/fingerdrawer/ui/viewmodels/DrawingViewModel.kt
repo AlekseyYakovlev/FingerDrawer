@@ -14,8 +14,17 @@ class DrawingViewModel : ViewModel() {
     var previousRotation: Int = 0
 
     var cacheBitmap: Bitmap? = null
+    var cachedBitmapWithOrientation: Pair<Bitmap, Int>? = null
 
     var currentRotation: Int = 0
+
+    val currentRotationNormalized: Int
+        get() = when (currentRotation) {
+            in 45..135 -> 90
+            in 135..225 -> 180
+            in 225..315 -> 270
+            else -> 0
+        }
 
     var rotation: Int = 0
         set(value) {
@@ -31,11 +40,11 @@ class DrawingViewModel : ViewModel() {
     var measuredHeight = 0
 
     val matrix = Matrix()
-        get() {
-            field.reset()
-            field.postRotate(angleToRotate)
-            return field
-        }
+//        get() {
+//            field.reset()
+//            field.postRotate(angleToRotate)
+//            return field
+//        }
 
     val paths = mutableListOf(Pair(Path(), newPaint()))
     var currentPath = Pair(Path(), newPaint())

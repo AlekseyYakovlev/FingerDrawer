@@ -2,7 +2,6 @@ package ru.spb.yakovlev.fingerdrawer.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProviders
 import ru.spb.yakovlev.fingerdrawer.R
 import ru.spb.yakovlev.fingerdrawer.ui.mainactivity.MainActivityFragment
 import ru.spb.yakovlev.fingerdrawer.ui.viewmodels.DrawingViewModel
@@ -35,10 +34,10 @@ class MainActivity : AppCompatActivity() {
 //        }
 
 
-        drawingViewModel = ViewModelProviders.of(this).get(DrawingViewModel::class.java)
-
-        drawingViewModel.rotation = windowManager.defaultDisplay.rotation
-        drawingViewModel.getAngleToRotateScreen()
+//        drawingViewModel = ViewModelProviders.of(this).get(DrawingViewModel::class.java)
+//
+//        drawingViewModel.rotation = windowManager.defaultDisplay.rotation
+//        drawingViewModel.getAngleToRotateScreen()
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()

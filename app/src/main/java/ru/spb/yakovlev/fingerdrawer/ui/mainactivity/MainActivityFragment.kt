@@ -20,7 +20,7 @@ class MainActivityFragment : Fragment() {
 
     val INIT_LINE_WIDTH = 50
     val INIT_COLOR = Color.BLACK
-    val INIT_BACKGROUND_COLOR = Color.WHITE
+    val INIT_BACKGROUND_COLOR = Color.GREEN
 
     companion object {
         fun newInstance() = MainActivityFragment()
@@ -80,9 +80,9 @@ class MainActivityFragment : Fragment() {
                 Log.d("1234567899Activity", "onOrientationChanged to $orientation")
                 drawingViewModel.currentRotation = orientation
 
-                if (drawingViewModel.cacheBitmap != null) {
+                if (drawingViewModel.cachedBitmapWithOrientation != null) {
                     drawing.loadBackground(orientation)
-                    drawing.background = drawing.getDrawable(resources, drawingViewModel.cacheBitmap!!)
+                    //drawing.background = drawing.getDrawable(resources, drawingViewModel.cacheBitmap!!)
                 }
 
             }
@@ -101,10 +101,9 @@ class MainActivityFragment : Fragment() {
         super.onResume()
         drawingViewModel.getAngleToRotateScreen()
 
-        if (drawingViewModel.cacheBitmap == null) {
+        if (drawingViewModel.cachedBitmapWithOrientation == null) {
             drawing.setBackgroundColor(INIT_BACKGROUND_COLOR)
-            drawingViewModel.setLineWidth(INIT_LINE_WIDTH)
-            //brashSize.text = INIT_LINE_WIDTH.toString()
+            //drawingViewModel.setLineWidth(INIT_LINE_WIDTH)
             brashSizeSeekBar.progress = INIT_LINE_WIDTH
             paletteViewModel.currentColor = INIT_COLOR
 
