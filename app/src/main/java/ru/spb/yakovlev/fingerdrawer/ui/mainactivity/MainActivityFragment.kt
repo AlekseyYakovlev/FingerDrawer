@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main_fragment.*
 import ru.spb.yakovlev.fingerdrawer.R
@@ -79,12 +80,6 @@ class MainActivityFragment : Fragment() {
             override fun onOrientationChanged(orientation: Int) {
                 Log.d("1234567899Activity", "onOrientationChanged to $orientation")
                 drawingViewModel.currentRotation = orientation
-
-                if (drawingViewModel.cachedBitmapWithOrientation != null) {
-                    drawing.loadBackground(orientation)
-                    //drawing.background = drawing.getDrawable(resources, drawingViewModel.cacheBitmap!!)
-                }
-
             }
 
         }
@@ -95,11 +90,27 @@ class MainActivityFragment : Fragment() {
             Log.d("1234567899Activity", "Cannot detect orientation")
             orientationEventListener.disable()
         }
+
+        drawingViewModel.currentRotationLive.observe(this, Observer {
+            redrawScreenAfterRotate()
+        })
+
+
     }
+
+    fun redrawScreenAfterRotate() {
+        drawingViewModel.setupModelAfterRotation()
+
+        if (drawingViewModel.cachedBitmapWithOrientation != null) {
+            drawing.loadBackground()
+
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
-        drawingViewModel.getAngleToRotateScreen()
+//        drawingViewModel.getAngleToRotateScreen()
 
         if (drawingViewModel.cachedBitmapWithOrientation == null) {
             drawing.setBackgroundColor(INIT_BACKGROUND_COLOR)

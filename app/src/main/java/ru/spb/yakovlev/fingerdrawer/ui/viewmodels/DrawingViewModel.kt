@@ -4,19 +4,31 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
-import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class DrawingViewModel : ViewModel() {
 
-
-    var angleToRotate: Float = 0f
-    var previousRotation: Int = 0
-
-    var cacheBitmap: Bitmap? = null
     var cachedBitmapWithOrientation: Pair<Bitmap, Int>? = null
 
+    val currentRotationLive = MutableLiveData<Int>()
+
     var currentRotation: Int = 0
+        set(value) {
+            val oldValue = field
+            val newValue = when (value) {
+                in 45..135 -> 90
+                in 135..225 -> 180
+                in 225..315 -> 270
+                else -> 0
+            }
+            if (oldValue != newValue) {
+                currentRotationLive.postValue(newValue)
+                field = newValue
+            }
+        }
+
+
 
     val currentRotationNormalized: Int
         get() = when (currentRotation) {
@@ -26,45 +38,47 @@ class DrawingViewModel : ViewModel() {
             else -> 0
         }
 
-    var rotation: Int = 0
-        set(value) {
-            field = value
-            angleToRotate = (((4 - value + previousRotation) % 4) * 90).toFloat()
-        }
-
-    var centerX = 0f
-    var centerY = 0f
-//    var rotationPoint = 0f
 
     var measuredWidth = 0
     var measuredHeight = 0
 
     val matrix = Matrix()
-//        get() {
-//            field.reset()
-//            field.postRotate(angleToRotate)
-//            return field
-//        }
+
 
     val paths = mutableListOf(Pair(Path(), newPaint()))
     var currentPath = Pair(Path(), newPaint())
 
-    fun getAngleToRotateScreen() {
-        when (rotation) {
-            android.view.Surface.ROTATION_0 -> {
-                Log.d("1234567899DrVM", " 0")
-            }
-            android.view.Surface.ROTATION_90 -> {
-                Log.d("1234567899DrVM", " 90")
-            }
-            android.view.Surface.ROTATION_180 -> {
-                Log.d("1234567899DrVM", " 180")
-            }
-            android.view.Surface.ROTATION_270 -> {
-                Log.d("1234567899DrVM", " 270")
-            }
-        }
+    fun getMatrix(sourceAngle: Int): Matrix {
+        val rotationAngle = ((360 + currentRotationNormalized - sourceAngle) % 360).toFloat()
+        matrix.reset()
+        matrix.postRotate(rotationAngle)
+
+        return matrix
     }
+
+    fun setupModelAfterRotation() {
+
+        paths.clear()
+        setColor(currentPath.second.color)
+    }
+
+//    fun getAngleToRotateScreen() {
+//        when (rotation) {
+//            android.view.Surface.ROTATION_0 -> {
+//                Log.d("1234567899DrVM", " 0")
+//            }
+//            android.view.Surface.ROTATION_90 -> {
+//                Log.d("1234567899DrVM", " 90")
+//            }
+//            android.view.Surface.ROTATION_180 -> {
+//                Log.d("1234567899DrVM", " 180")
+//            }
+//            android.view.Surface.ROTATION_270 -> {
+//                Log.d("1234567899DrVM", " 270")
+//            }
+//        }
+//    }
+
 
     private fun addPathWithNewAttribute(attribute: String, value: Int) {
         val paint = newPaint()
