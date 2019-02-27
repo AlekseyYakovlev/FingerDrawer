@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
@@ -11,7 +12,11 @@ class DrawingViewModel : ViewModel() {
 
     var cachedBitmapWithOrientation: Pair<Bitmap, Int>? = null
 
-    val currentRotationLive = MutableLiveData<Int>()
+    private val currentRotationLive = MutableLiveData<Int>()
+
+    fun getCurrentRotationLive(): LiveData<Int> {
+        return currentRotationLive
+    }
 
     var currentRotation: Int = 0
         set(value) {
@@ -23,11 +28,14 @@ class DrawingViewModel : ViewModel() {
                 else -> 0
             }
             if (oldValue != newValue) {
-                currentRotationLive.postValue(newValue)
+                currentRotationLive.value = newValue
                 field = newValue
+
+
+                if (((360 + newValue - oldValue) % 360) == 180)
+                    rotation180Live.value = 180
             }
         }
-
 
 
     val currentRotationNormalized: Int
@@ -38,6 +46,12 @@ class DrawingViewModel : ViewModel() {
             else -> 0
         }
 
+
+    private val rotation180Live = MutableLiveData<Int>()
+
+    fun getRotation180Live(): LiveData<Int> {
+        return rotation180Live
+    }
 
     var measuredWidth = 0
     var measuredHeight = 0
@@ -57,7 +71,6 @@ class DrawingViewModel : ViewModel() {
     }
 
     fun setupModelAfterRotation() {
-
         paths.clear()
         setColor(currentPath.second.color)
     }

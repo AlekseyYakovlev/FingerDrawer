@@ -83,15 +83,9 @@ class MainActivityFragment : Fragment() {
             }
 
         }
-        if (orientationEventListener.canDetectOrientation()) {
-            Log.d("1234567899Activity", "Can detect orientation")
-            orientationEventListener.enable()
-        } else {
-            Log.d("1234567899Activity", "Cannot detect orientation")
-            orientationEventListener.disable()
-        }
 
-        drawingViewModel.currentRotationLive.observe(this, Observer {
+
+        drawingViewModel.getRotation180Live().observe(this, Observer {
             redrawScreenAfterRotate()
         })
 
@@ -121,46 +115,29 @@ class MainActivityFragment : Fragment() {
             Log.d("1234567899Fragment", "onResume Color.WHITE")
         } else {
             Log.d("1234567899Fragment", "onResume drawing.background ")
-
-            //drawing.background = drawing.getDrawable(resources,drawingViewModel.cacheBitmap!!)
+            redrawScreenAfterRotate()
         }
 
 
         drawing.invalidate()
+        if (orientationEventListener.canDetectOrientation()) {
+            Log.d("1234567899Activity", "Can detect orientation")
+            orientationEventListener.enable()
+        } else {
+            Log.d("1234567899Activity", "Cannot detect orientation")
+            orientationEventListener.disable()
+        }
     }
 
-//    override fun onPause() {
-//        super.onPause()
-//        Log.d("1234567899Fragment", "onPause")
-//        drawingViewModel.cacheBitmap=drawing.getBitmap()
-//        Log.d("1234567899Fragment", "onPause drawingViewModel.cacheBitmap is null = ${drawingViewModel.cacheBitmap==null}")
-//        drawingViewModel.paths.clear()
-//    }
+    override fun onPause() {
+        super.onPause()
+        orientationEventListener.disable()
 
-//    override fun onConfigurationChanged(newConfig: Configuration?) {
-//        super.onConfigurationChanged(newConfig)
-//        activity?.windowManager?.defaultDisplay?.run {
-//            when (rotation){
-//                android.view.Surface.ROTATION_0 -> {
-//                    Log.d("1234567899DrVM"," 0+")
-//                }
-//                android.view.Surface.ROTATION_90 -> {
-//                    Log.d("1234567899DrVM"," 90+")
-//                }
-//                android.view.Surface.ROTATION_180 -> {
-//                    Log.d("1234567899DrVM"," 180+")
-//                }
-//                android.view.Surface.ROTATION_270 -> {
-//                    Log.d("1234567899DrVM"," 270+")
-//                }
-//                else -> Log.d("1234567899DrVM"," Error")
-//            }
-//        }
-//    }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d("1234567899Activity", "onDestroyView")
-        orientationEventListener.disable()
+
     }
 }
